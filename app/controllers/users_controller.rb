@@ -7,13 +7,13 @@ class UsersController < ApplicationController
   @current_user = User.where({:username => un}).at(0)
 
   if @current_user == nil
-    redirect_to("/user_sign_in_form", {:alert => "No one by that name here"})
+    redirect_to("/user_sign_in", {:alert => "No one by that name here"})
   else
     if @current_user.authenticate(pw)
       session.store(:user_id, @current_user.id)
       redirect_to("/", {:notice => "Welcome back #{@current_user.username}"})
     else 
-      redirect_to("/user_sign_in_form", {:alert => "Wrong password. Please try again"})
+      redirect_to("/user_sign_in", {:alert => "Wrong password. Please try again"})
     end
   
   end
