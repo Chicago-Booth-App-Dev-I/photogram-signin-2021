@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # User routes
 
   # CREATE
+  get("/user_sign_up", {:controller => "users", :action => "registration_form"})
   get("/insert_user_record", {:controller => "users", :action => "create" })
 
   # READ
@@ -41,5 +42,6 @@ Rails.application.routes.draw do
   # DELETE
 
   get("/delete_comment/:the_comment_id", { :controller => "comments", :action => "destroy"})
+
 
 end
