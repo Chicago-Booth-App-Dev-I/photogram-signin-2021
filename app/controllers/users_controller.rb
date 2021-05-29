@@ -1,4 +1,34 @@
 class UsersController < ApplicationController
+  
+  def authenticate
+  un = params.fetch("input_username")
+  pw = params.fetch("input_password")
+
+  @current_user = User.where({:username => un}).at(0)
+
+  if @current_user == nil
+    redirect_to("/user_sign_in_form", {:alert => "No one by that name here"})
+  else
+    if @current_user.authenticate(pw)
+      session.store(:user_id, @current_user.id)
+      redirect_to("/", {:notice => "Welcome back #{@current_user.username}"})
+    else 
+      redirect_to("/user_sign_in_form", {:alert => "Wrong password. Please try again"})
+    end
+  
+  end
+
+  end
+  
+  def sign_in_form
+  render({:template => "/users/sign_in_form"})
+  end
+  
+  def delete_cookies
+  reset_session
+  redirect_to("/users", {:notice => "See you later"})
+  end
+  
   def index
     @users = User.all.order({ :username => :asc })
 
@@ -19,12 +49,14 @@ class UsersController < ApplicationController
     user.password = params.fetch("input_password")
     user.password_confirmation = params.fetch("input_password_confirm")
 
+    user.save
     save_status = user.save
 
     if save_status == true
+      session.store(:user_id, user.id)
       redirect_to("/users/#{user.username}", {:notice => "Welcome #{user.username}"})
     else
-      redirect_to("/user_sign_up", {:alert => user.error.full_messages})
+      redirect_to("/user_sign_up", {:alert => user.errors.full_messages.to_sentence})
     end
 
   end
